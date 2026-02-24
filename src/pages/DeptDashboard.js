@@ -13,10 +13,10 @@ export default function DeptDashboard() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    loadDeptInfo()
-  }, [])
+  loadDeptInfo()
+ }, [loadDeptInfo])
 
-  const loadDeptInfo = async () => {
+  const loadDeptInfo = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
     const { data: staff } = await supabase
       .from('staff_accounts')
@@ -39,7 +39,7 @@ export default function DeptDashboard() {
 
       return () => subscription.unsubscribe()
     }
-  }
+  }, [])
 
   const fetchComplaints = async (dept) => {
     const { data, error } = await supabase
