@@ -1,20 +1,20 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import LoginPage from './pages/LoginPage'
+import AdminDashboard from './pages/AdminDashboard'
+import DeptDashboard from './pages/DeptDashboard'
+import './App.css'
+
 function App() {
   return (
-    <div style={{textAlign:"center", marginTop:"100px"}}>
-      <h1>Smart Civic Portal</h1>
-      <p>Crowdsourced Civic Issue Reporting System</p>
-      <button style={{
-        padding:"10px 20px",
-        fontSize:"18px",
-        backgroundColor:"#007bff",
-        color:"white",
-        border:"none",
-        borderRadius:"8px"
-      }}>
-        Report Issue
-      </button>
-    </div>
-  );
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/department" element={<DeptDashboard />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
-export default App;
+export default App
