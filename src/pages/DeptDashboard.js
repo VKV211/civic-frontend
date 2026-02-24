@@ -13,33 +13,33 @@ export default function DeptDashboard() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    const loadDeptInfo = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data: staff } = await supabase
+        .from('staff_accounts')
+        .select('full_name, department_name')
+        .eq('id', user.id)
+        .single()
+
+      if (staff) {
+        setDeptName(staff.department_name)
+        setStaffName(staff.full_name)
+        fetchComplaints(staff.department_name)
+
+        const subscription = supabase
+          .channel('dept-complaints')
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'complaints' },
+            () => fetchComplaints(staff.department_name)
+          )
+          .subscribe()
+
+        return () => subscription.unsubscribe()
+      }
+    }
+
     loadDeptInfo()
   }, [])
-
-  const loadDeptInfo = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: staff } = await supabase
-      .from('staff_accounts')
-      .select('full_name, department_name')
-      .eq('id', user.id)
-      .single()
-
-    if (staff) {
-      setDeptName(staff.department_name)
-      setStaffName(staff.full_name)
-      fetchComplaints(staff.department_name)
-
-      const subscription = supabase
-        .channel('dept-complaints')
-        .on('postgres_changes',
-          { event: '*', schema: 'public', table: 'complaints' },
-          () => fetchComplaints(staff.department_name)
-        )
-        .subscribe()
-
-      return () => subscription.unsubscribe()
-    }
-  }
 
   const fetchComplaints = async (dept) => {
     const { data, error } = await supabase
