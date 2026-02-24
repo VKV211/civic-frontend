@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 
@@ -13,7 +13,6 @@ export default function DeptDashboard() {
   const navigate = useNavigate()
 
   useEffect(() => {
-<<<<<<< HEAD
     const loadDeptInfo = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       const { data: staff } = await supabase
@@ -42,36 +41,6 @@ export default function DeptDashboard() {
     loadDeptInfo()
   }, [])
 
-=======
-  loadDeptInfo()
- }, [loadDeptInfo])
-
-  const loadDeptInfo = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: staff } = await supabase
-      .from('staff_accounts')
-      .select('full_name, department_name')
-      .eq('id', user.id)
-      .single()
-
-    if (staff) {
-      setDeptName(staff.department_name)
-      setStaffName(staff.full_name)
-      fetchComplaints(staff.department_name)
-
-      const subscription = supabase
-        .channel('dept-complaints')
-        .on('postgres_changes',
-          { event: '*', schema: 'public', table: 'complaints' },
-          () => fetchComplaints(staff.department_name)
-        )
-        .subscribe()
-
-      return () => subscription.unsubscribe()
-    }
-  }, [])
-
->>>>>>> ea6d930e571cbb49a8495bcd2166dac372764f75
   const fetchComplaints = async (dept) => {
     const { data, error } = await supabase
       .from('complaints')
