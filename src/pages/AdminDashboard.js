@@ -247,7 +247,7 @@ export default function AdminDashboard() {
                       <div style={{ marginBottom: 14 }}>
                         <p style={s.secLabel}>📷 Issue Photo</p>
                         <img
-                          src={imgUrl(r.image)} alt="Issue photo"
+                          src={imgUrl(r.image)} alt="Reported issue"
                           style={s.photo}
                           onClick={() => window.open(imgUrl(r.image), '_blank')}
                         />
