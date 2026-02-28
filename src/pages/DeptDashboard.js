@@ -59,7 +59,9 @@ export default function DeptDashboard() {
     pollRef.current = setInterval(loadReports, 10000)
     return () => { clearInterval(pollRef.current); clearTimeout(timerRef.current) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deptName])
+ 
 
   // ── Load only reports assigned to this department ────────────
   // Filter: reports.department == deptName  (set by admin on assign)
