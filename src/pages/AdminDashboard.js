@@ -20,6 +20,7 @@ const PROJECT_ID  = '699eabd30027a825d35d'
 // ── Google Maps API Key ────────────────────────────────────────
 const GMAPS_KEY = 'AIzaSyD-6-GBBKAFCWbiJDGpKGZCzIfIegreAPc'
 // ──────────────────────────────────────────────────────────────
+const isInvalidReport = (r) => r.isValid === false
 
 const imgUrl = (fileId) =>
   `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${fileId}/view?project=${PROJECT_ID}`
@@ -291,10 +292,11 @@ export default function AdminDashboard() {
     try {
       // Update report
       await db.updateDocument(DB_ID, REPORTS_COL, report.$id, {
-        isValid:       option.isValid,
-        priority:      option.priority,
-        pointsAwarded: option.pts,
-      })
+      isValid:       option.isValid,
+      priority:      option.priority,
+      pointsAwarded: option.pts,
+      status: option.isValid ? report.status : 'resolved' // 🔥 force stop
+        })
 
       // Get user current points
       const userDoc = await db.getDocument(DB_ID, USER_COL, report.userId)
@@ -486,6 +488,19 @@ export default function AdminDashboard() {
                 {/* EXPANDED */}
                 {exp && (
                   <div style={s.body}>
+                       {isInvalidReport(r) && (
+                        <div style={{
+                         background: '#fef2f2',
+                          border: '1.5px solid #ef4444',
+                          color: '#b91c1c',
+                          borderRadius: 12,
+                          padding: '12px 14px',
+                        marginTop: 10,
+                        fontWeight: 600
+                        }}>
+                        ❌ This report is marked INVALID. No further action allowed.
+                       </div>
+                       )}
 
                     {/* Photo */}
                     {r.image && (
@@ -516,7 +531,7 @@ export default function AdminDashboard() {
                     <div style={s.aiBox}>
                       <div style={s.aiBoxHeader}>
                         <span style={s.aiBoxTitle}>🤖 AI Priority Analysis</span>
-                        {!r.priority && !aiR && (
+                        {!r.priority && !aiR && !isInvalidReport(r) && (
                           <button
                             style={s.aiRunBtn}
                             onClick={() => runAIAnalysis(r)}
@@ -602,7 +617,7 @@ export default function AdminDashboard() {
                     )}
 
                     {/* ── ASSIGN TO DEPARTMENT ──────────────── */}
-                    {r.status === 'pending' && (
+                    {r.status === 'pending' && !isInvalidReport(r) && (
                       <div style={s.assignBox}>
                         <p style={s.assignTitle}>
                           📤 Assign to Department:
